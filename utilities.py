@@ -30,21 +30,18 @@ def get_articles(url, source):
             if not article.keywords:
                 continue
 
-            o = urlparse(article.url)
-            parsed_source = o.netloc.split(".")[0]
-            if parsed_source == source:
-                pub_date = article.publish_date.strftime("%Y-%m-%d")
+            pub_date = article.publish_date.strftime("%Y-%m-%d")
 
-                parsed_article = {
-                    'title': article.title,
-                    'source': source,
-                    'article_link': article.url,
-                    'image_link': article.top_image,
-                    'pub_date': pub_date,
-                    'keywords': article.keywords,
-                }
+            parsed_article = {
+                'title': article.title,
+                'source': source,
+                'article_link': article.url,
+                'image_link': article.top_image,
+                'pub_date': pub_date,
+                'keywords': article.keywords,
+            }
 
-                post_article(parsed_article)
+            post_article(parsed_article)
 
 
 def validate_article(article):
