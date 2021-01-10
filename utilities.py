@@ -1,9 +1,10 @@
 import requests
 import newspaper
-from urllib.parse import urlparse
 
 
-def get_articles(url, source):
+def get_articles(url, source, ignore_strings=None):
+    if ignore_strings is None:
+        ignore_strings = []
     paper = newspaper.build(url)
     print(len(paper.articles))
 
@@ -20,7 +21,7 @@ def get_articles(url, source):
             print('Article failed to parse')
             continue
 
-        if validate_article(article):
+        if validate_article(article, ignore_strings):
             try:
                 article.nlp()
             except:
@@ -44,15 +45,16 @@ def get_articles(url, source):
             post_article(parsed_article)
 
 
-def validate_article(article):
+def validate_article(article, ignore_strings):
     if not article.title:
         return False
 
     if not article.url:
         return False
 
-    if not article.top_image:
-        return False
+    for ignore_string in ignore_strings:
+        if ignore_string in article.url:
+            return False
 
     if not article.publish_date:
         return False
@@ -61,7 +63,7 @@ def validate_article(article):
 
 
 def post_article(article):
-    api = 'http://localhost:8000/articles/'
+    api = 'https://mytrustedsourceapi.herokuapp.com/articles/'
     r = requests.post(api, data=article)
 
     print(r.text)
